@@ -1,4 +1,4 @@
-module hostManager
+module hostManagerProto
 
 go 1.22
 
