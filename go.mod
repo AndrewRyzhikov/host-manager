@@ -1,4 +1,4 @@
-module hostManagerProto
+module github.com/AndrewRyzhikov/hostManagerProto
 
 go 1.22
 
