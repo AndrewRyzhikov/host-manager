@@ -24,11 +24,11 @@ func StartApp() {
 		log.Fatal().Err(err).Msg("Failed to setup logger")
 	}
 
-	grpcServer := grpc.NewServer(cfg.GRPCConfig.Port)
+	grpcServer := grpc.NewServer(cfg.GRPCConfig.Port, log.Logger)
 	if err = grpcServer.Start(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start gRPC server")
 	}
-	httpServer := rest.NewServer(cfg.HTTPConfig)
+	httpServer := rest.NewServer(cfg.HTTPConfig, log.Logger)
 	if err = httpServer.Start(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start HTTP server")
 	}

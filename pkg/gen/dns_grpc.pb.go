@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.4.0
 // - protoc             v3.21.12
-// source: proto/dns_hostname_service.proto
+// source: proto/dns.proto
 
 package gen
 
@@ -19,20 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	DNSHostnameService_SetHostname_FullMethodName     = "/dns_hostname_service.DNSHostnameService/SetHostname"
-	DNSHostnameService_ListDNSServers_FullMethodName  = "/dns_hostname_service.DNSHostnameService/ListDNSServers"
-	DNSHostnameService_AddDNSServer_FullMethodName    = "/dns_hostname_service.DNSHostnameService/AddDNSServer"
-	DNSHostnameService_RemoveDNSServer_FullMethodName = "/dns_hostname_service.DNSHostnameService/RemoveDNSServer"
+	DNSHostnameService_SetHostname_FullMethodName     = "/dns.DNSHostnameService/SetHostname"
+	DNSHostnameService_ListDNSServers_FullMethodName  = "/dns.DNSHostnameService/ListDNSServers"
+	DNSHostnameService_AddDNSServer_FullMethodName    = "/dns.DNSHostnameService/AddDNSServer"
+	DNSHostnameService_RemoveDNSServer_FullMethodName = "/dns.DNSHostnameService/RemoveDNSServer"
 )
 
 // DNSHostnameServiceClient is the client API for DNSHostnameService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DNSHostnameServiceClient interface {
-	SetHostname(ctx context.Context, in *SetHostnameRequest, opts ...grpc.CallOption) (*Response, error)
-	ListDNSServers(ctx context.Context, in *Request, opts ...grpc.CallOption) (*ListDNSServersResponse, error)
-	AddDNSServer(ctx context.Context, in *AddDNSServerRequest, opts ...grpc.CallOption) (*Response, error)
-	RemoveDNSServer(ctx context.Context, in *RemoveDNSServerRequest, opts ...grpc.CallOption) (*Response, error)
+	SetHostname(ctx context.Context, in *SetHostnameRequest, opts ...grpc.CallOption) (*SetHostnameResponse, error)
+	ListDNSServers(ctx context.Context, in *ListDNSServersRequest, opts ...grpc.CallOption) (*ListDNSServersResponse, error)
+	AddDNSServer(ctx context.Context, in *AddDNSServerRequest, opts ...grpc.CallOption) (*AddDNSServerResponse, error)
+	RemoveDNSServer(ctx context.Context, in *RemoveDNSServerRequest, opts ...grpc.CallOption) (*RemoveDNSServerResponse, error)
 }
 
 type dNSHostnameServiceClient struct {
@@ -43,9 +43,9 @@ func NewDNSHostnameServiceClient(cc grpc.ClientConnInterface) DNSHostnameService
 	return &dNSHostnameServiceClient{cc}
 }
 
-func (c *dNSHostnameServiceClient) SetHostname(ctx context.Context, in *SetHostnameRequest, opts ...grpc.CallOption) (*Response, error) {
+func (c *dNSHostnameServiceClient) SetHostname(ctx context.Context, in *SetHostnameRequest, opts ...grpc.CallOption) (*SetHostnameResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
+	out := new(SetHostnameResponse)
 	err := c.cc.Invoke(ctx, DNSHostnameService_SetHostname_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *dNSHostnameServiceClient) SetHostname(ctx context.Context, in *SetHostn
 	return out, nil
 }
 
-func (c *dNSHostnameServiceClient) ListDNSServers(ctx context.Context, in *Request, opts ...grpc.CallOption) (*ListDNSServersResponse, error) {
+func (c *dNSHostnameServiceClient) ListDNSServers(ctx context.Context, in *ListDNSServersRequest, opts ...grpc.CallOption) (*ListDNSServersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListDNSServersResponse)
 	err := c.cc.Invoke(ctx, DNSHostnameService_ListDNSServers_FullMethodName, in, out, cOpts...)
@@ -63,9 +63,9 @@ func (c *dNSHostnameServiceClient) ListDNSServers(ctx context.Context, in *Reque
 	return out, nil
 }
 
-func (c *dNSHostnameServiceClient) AddDNSServer(ctx context.Context, in *AddDNSServerRequest, opts ...grpc.CallOption) (*Response, error) {
+func (c *dNSHostnameServiceClient) AddDNSServer(ctx context.Context, in *AddDNSServerRequest, opts ...grpc.CallOption) (*AddDNSServerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
+	out := new(AddDNSServerResponse)
 	err := c.cc.Invoke(ctx, DNSHostnameService_AddDNSServer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -73,9 +73,9 @@ func (c *dNSHostnameServiceClient) AddDNSServer(ctx context.Context, in *AddDNSS
 	return out, nil
 }
 
-func (c *dNSHostnameServiceClient) RemoveDNSServer(ctx context.Context, in *RemoveDNSServerRequest, opts ...grpc.CallOption) (*Response, error) {
+func (c *dNSHostnameServiceClient) RemoveDNSServer(ctx context.Context, in *RemoveDNSServerRequest, opts ...grpc.CallOption) (*RemoveDNSServerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
+	out := new(RemoveDNSServerResponse)
 	err := c.cc.Invoke(ctx, DNSHostnameService_RemoveDNSServer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -87,10 +87,10 @@ func (c *dNSHostnameServiceClient) RemoveDNSServer(ctx context.Context, in *Remo
 // All implementations must embed UnimplementedDNSHostnameServiceServer
 // for forward compatibility
 type DNSHostnameServiceServer interface {
-	SetHostname(context.Context, *SetHostnameRequest) (*Response, error)
-	ListDNSServers(context.Context, *Request) (*ListDNSServersResponse, error)
-	AddDNSServer(context.Context, *AddDNSServerRequest) (*Response, error)
-	RemoveDNSServer(context.Context, *RemoveDNSServerRequest) (*Response, error)
+	SetHostname(context.Context, *SetHostnameRequest) (*SetHostnameResponse, error)
+	ListDNSServers(context.Context, *ListDNSServersRequest) (*ListDNSServersResponse, error)
+	AddDNSServer(context.Context, *AddDNSServerRequest) (*AddDNSServerResponse, error)
+	RemoveDNSServer(context.Context, *RemoveDNSServerRequest) (*RemoveDNSServerResponse, error)
 	mustEmbedUnimplementedDNSHostnameServiceServer()
 }
 
@@ -98,16 +98,16 @@ type DNSHostnameServiceServer interface {
 type UnimplementedDNSHostnameServiceServer struct {
 }
 
-func (UnimplementedDNSHostnameServiceServer) SetHostname(context.Context, *SetHostnameRequest) (*Response, error) {
+func (UnimplementedDNSHostnameServiceServer) SetHostname(context.Context, *SetHostnameRequest) (*SetHostnameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetHostname not implemented")
 }
-func (UnimplementedDNSHostnameServiceServer) ListDNSServers(context.Context, *Request) (*ListDNSServersResponse, error) {
+func (UnimplementedDNSHostnameServiceServer) ListDNSServers(context.Context, *ListDNSServersRequest) (*ListDNSServersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDNSServers not implemented")
 }
-func (UnimplementedDNSHostnameServiceServer) AddDNSServer(context.Context, *AddDNSServerRequest) (*Response, error) {
+func (UnimplementedDNSHostnameServiceServer) AddDNSServer(context.Context, *AddDNSServerRequest) (*AddDNSServerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDNSServer not implemented")
 }
-func (UnimplementedDNSHostnameServiceServer) RemoveDNSServer(context.Context, *RemoveDNSServerRequest) (*Response, error) {
+func (UnimplementedDNSHostnameServiceServer) RemoveDNSServer(context.Context, *RemoveDNSServerRequest) (*RemoveDNSServerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveDNSServer not implemented")
 }
 func (UnimplementedDNSHostnameServiceServer) mustEmbedUnimplementedDNSHostnameServiceServer() {}
@@ -142,7 +142,7 @@ func _DNSHostnameService_SetHostname_Handler(srv interface{}, ctx context.Contex
 }
 
 func _DNSHostnameService_ListDNSServers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
+	in := new(ListDNSServersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func _DNSHostnameService_ListDNSServers_Handler(srv interface{}, ctx context.Con
 		FullMethod: DNSHostnameService_ListDNSServers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DNSHostnameServiceServer).ListDNSServers(ctx, req.(*Request))
+		return srv.(DNSHostnameServiceServer).ListDNSServers(ctx, req.(*ListDNSServersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -199,7 +199,7 @@ func _DNSHostnameService_RemoveDNSServer_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DNSHostnameService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "dns_hostname_service.DNSHostnameService",
+	ServiceName: "dns.DNSHostnameService",
 	HandlerType: (*DNSHostnameServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -220,5 +220,5 @@ var DNSHostnameService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/dns_hostname_service.proto",
+	Metadata: "proto/dns.proto",
 }

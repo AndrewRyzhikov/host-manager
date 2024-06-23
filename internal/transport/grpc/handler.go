@@ -26,7 +26,7 @@ func Register(gRPC *grpc.Server) {
 	api.RegisterDNSHostnameServiceServer(gRPC, server)
 }
 
-func (s *Handler) SetHostname(ctx context.Context, r *api.SetHostnameRequest) (*api.Response, error) {
+func (s *Handler) SetHostname(ctx context.Context, r *api.SetHostnameRequest) (*api.SetHostnameResponse, error) {
 	if r.GetHostname() == "" {
 		return nil, status.Error(codes.InvalidArgument, "hostname or hostname is empty")
 	}
@@ -35,9 +35,9 @@ func (s *Handler) SetHostname(ctx context.Context, r *api.SetHostnameRequest) (*
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &api.Response{}, nil
+	return &api.SetHostnameResponse{}, nil
 }
-func (s *Handler) ListDNSServers(ctx context.Context, r *api.Request) (*api.ListDNSServersResponse, error) {
+func (s *Handler) ListDNSServers(ctx context.Context, r *api.ListDNSServersRequest) (*api.ListDNSServersResponse, error) {
 	servers, err := s.manager.ListDNSServers(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -46,7 +46,7 @@ func (s *Handler) ListDNSServers(ctx context.Context, r *api.Request) (*api.List
 	return &api.ListDNSServersResponse{DnsServers: servers}, nil
 }
 
-func (s *Handler) AddDNSServer(ctx context.Context, r *api.AddDNSServerRequest) (*api.Response, error) {
+func (s *Handler) AddDNSServer(ctx context.Context, r *api.AddDNSServerRequest) (*api.AddDNSServerResponse, error) {
 	if r.GetDnsServer() == "" {
 		return nil, status.Error(codes.InvalidArgument, "dns server is empty")
 	}
@@ -55,9 +55,9 @@ func (s *Handler) AddDNSServer(ctx context.Context, r *api.AddDNSServerRequest) 
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &api.Response{}, nil
+	return &api.AddDNSServerResponse{}, nil
 }
-func (s *Handler) RemoveDNSServer(ctx context.Context, r *api.RemoveDNSServerRequest) (*api.Response, error) {
+func (s *Handler) RemoveDNSServer(ctx context.Context, r *api.RemoveDNSServerRequest) (*api.RemoveDNSServerResponse, error) {
 	if r.GetDnsServer() == "" {
 		return nil, status.Error(codes.InvalidArgument, "dns server is empty")
 	}
@@ -66,5 +66,5 @@ func (s *Handler) RemoveDNSServer(ctx context.Context, r *api.RemoveDNSServerReq
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &api.Response{}, nil
+	return &api.RemoveDNSServerResponse{}, nil
 }
