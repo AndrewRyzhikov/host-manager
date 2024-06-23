@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"os"
 
@@ -8,9 +10,10 @@ import (
 )
 
 type Config struct {
-	GRPCConfig GRPCConfig `yaml:"grpc" env-required:"true"`
-	HTTPConfig HTTPConfig `yaml:"http" env-required:"true"`
-	LogConfig  LogConfig  `yaml:"log" env-required:"true"`
+	GRPCConfig   GRPCConfig   `yaml:"grpc" env-required:"true"`
+	HTTPConfig   HTTPConfig   `yaml:"http" env-required:"true"`
+	BackupConfig BackupConfig `yaml:"backup"`
+	LogConfig    LogConfig    `yaml:"log" env-required:"true"`
 }
 
 type HTTPConfig struct {
@@ -20,6 +23,11 @@ type HTTPConfig struct {
 
 type GRPCConfig struct {
 	Port int `yaml:"port" env-required:"true"`
+}
+
+type BackupConfig struct {
+	BackupHostnameFilePath string `yaml:"backup_hostname_file_path" env-default:"/etc/backup/hostname/"`
+	BackupDNSFilePath      string `yaml:"backup_dns_file_path" env-default:"/etc/backup/dns/"`
 }
 
 type LogConfig struct {
@@ -36,7 +44,12 @@ type LumberjackConfig struct {
 	Compress   bool   `yaml:"compress"`
 }
 
-func Load(path string) (*Config, error) {
+func Load() (*Config, error) {
+	path := fetchConfig()
+	if path == "" {
+		return nil, errors.New("config file not exist")
+	}
+
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, fmt.Errorf("config path does not exist: %s", path)
 	}
@@ -48,4 +61,13 @@ func Load(path string) (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+func fetchConfig() string {
+	var res string
+
+	flag.StringVar(&res, "config", "", "path to config")
+	flag.Parse()
+
+	return res
 }

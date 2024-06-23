@@ -28,7 +28,7 @@ func NewServer(cfg config.HTTPConfig, log zerolog.Logger) *Server {
 
 func (s *Server) Start() error {
 	const op = "http.Start"
-	s.log = s.log.With().Str("op", "op").Logger()
+	s.log = s.log.With().Str("op", op).Logger()
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
@@ -43,7 +43,7 @@ func (s *Server) Start() error {
 		Handler: mux,
 	}
 
-	log.Info().Str("http server started on %s", s.httpServer.Addr)
+	s.log.Info().Msgf("http server started on %s", s.httpServer.Addr)
 
 	go func() {
 		if err = s.httpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {

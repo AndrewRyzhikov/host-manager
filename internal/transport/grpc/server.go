@@ -2,10 +2,13 @@ package grpc
 
 import (
 	"fmt"
+	"net"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
-	"net"
+
+	"hostManager/internal/config"
 )
 
 type Server struct {
@@ -14,9 +17,9 @@ type Server struct {
 	log        zerolog.Logger
 }
 
-func NewServer(post int, log zerolog.Logger) *Server {
+func NewServer(post int, log zerolog.Logger, cfg config.BackupConfig) *Server {
 	grpcServer := grpc.NewServer()
-	Register(grpcServer)
+	Register(grpcServer, cfg)
 
 	return &Server{post: post, log: log, grpcServer: grpcServer}
 }
@@ -30,11 +33,11 @@ func (s *Server) Start() error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	log.Info().Str("grpc server started on %s", l.Addr().String())
+	s.log.Info().Msgf("gRPC server started on %s", l.Addr().String())
 
 	go func() {
 		if err := s.grpcServer.Serve(l); err != nil {
-			log.Fatal().Msg("grpc server failed to serve")
+			s.log.Fatal().Msg("grpc server failed to serve")
 		}
 	}()
 

@@ -2,25 +2,27 @@ package grpc
 
 import (
 	"context"
-	"github.com/rs/zerolog/log"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"hostManager/internal/config"
 	"hostManager/internal/service"
 	api "hostManager/pkg/gen"
 )
 
 type Handler struct {
 	api.UnimplementedDNSHostnameServiceServer
-	manager service.DNSManager
+	manager service.HostManager
 }
 
-func NewHandler(manager service.DNSManager) *Handler {
+func NewHandler(manager service.HostManager) *Handler {
 	return &Handler{manager: manager}
 }
 
-func Register(gRPC *grpc.Server) {
-	manager := service.NewFileSystemDNSManager(log.Logger)
+func Register(gRPC *grpc.Server, cfg config.BackupConfig) {
+	manager := service.NewFileSystemHostManager(cfg)
 	server := NewHandler(manager)
 
 	api.RegisterDNSHostnameServiceServer(gRPC, server)
@@ -37,6 +39,7 @@ func (s *Handler) SetHostname(ctx context.Context, r *api.SetHostnameRequest) (*
 
 	return &api.SetHostnameResponse{}, nil
 }
+
 func (s *Handler) ListDNSServers(ctx context.Context, r *api.ListDNSServersRequest) (*api.ListDNSServersResponse, error) {
 	servers, err := s.manager.ListDNSServers(ctx)
 	if err != nil {
@@ -57,6 +60,7 @@ func (s *Handler) AddDNSServer(ctx context.Context, r *api.AddDNSServerRequest) 
 
 	return &api.AddDNSServerResponse{}, nil
 }
+
 func (s *Handler) RemoveDNSServer(ctx context.Context, r *api.RemoveDNSServerRequest) (*api.RemoveDNSServerResponse, error) {
 	if r.GetDnsServer() == "" {
 		return nil, status.Error(codes.InvalidArgument, "dns server is empty")
