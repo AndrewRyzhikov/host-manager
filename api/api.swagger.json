@@ -43,7 +43,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/dnsResponse"
+              "$ref": "#/definitions/dnsAddDNSServerResponse"
             }
           },
           "default": {
@@ -75,7 +75,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/dnsResponse"
+              "$ref": "#/definitions/dnsRemoveDNSServerResponse"
             }
           },
           "default": {
@@ -105,7 +105,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/dnsResponse"
+              "$ref": "#/definitions/dnsSetHostnameResponse"
             }
           },
           "default": {
@@ -140,6 +140,9 @@
         }
       }
     },
+    "dnsAddDNSServerResponse": {
+      "type": "object"
+    },
     "dnsListDNSServersResponse": {
       "type": "object",
       "properties": {
@@ -151,7 +154,7 @@
         }
       }
     },
-    "dnsResponse": {
+    "dnsRemoveDNSServerResponse": {
       "type": "object"
     },
     "dnsSetHostnameRequest": {
@@ -161,6 +164,9 @@
           "type": "string"
         }
       }
+    },
+    "dnsSetHostnameResponse": {
+      "type": "object"
     },
     "protobufAny": {
       "type": "object",
