@@ -2,7 +2,7 @@
 // source: proto/dns_hostname_service.proto
 
 /*
-Package dns_hostname_service is a reverse proxy.
+Package api is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
@@ -58,7 +58,7 @@ func local_request_DNSHostnameService_SetHostname_0(ctx context.Context, marshal
 }
 
 func request_DNSHostnameService_ListDNSServers_0(ctx context.Context, marshaler runtime.Marshaler, client DNSHostnameServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ListDNSServersRequest
+	var protoReq Request
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.ListDNSServers(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -67,7 +67,7 @@ func request_DNSHostnameService_ListDNSServers_0(ctx context.Context, marshaler 
 }
 
 func local_request_DNSHostnameService_ListDNSServers_0(ctx context.Context, marshaler runtime.Marshaler, server DNSHostnameServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ListDNSServersRequest
+	var protoReq Request
 	var metadata runtime.ServerMetadata
 
 	msg, err := server.ListDNSServers(ctx, &protoReq)
