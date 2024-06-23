@@ -1,11 +1,10 @@
 package config
 
 import (
-	"errors"
-	"flag"
 	"fmt"
-	"github.com/ilyakaznacheev/cleanenv"
 	"os"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
@@ -37,12 +36,7 @@ type LumberjackConfig struct {
 	Compress   bool   `yaml:"compress"`
 }
 
-func Load() (*Config, error) {
-	path := fetchConfig()
-	if path == "" {
-		return nil, errors.New("config file not exist")
-	}
-
+func Load(path string) (*Config, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, fmt.Errorf("config path does not exist: %s", path)
 	}
@@ -54,13 +48,4 @@ func Load() (*Config, error) {
 	}
 
 	return &cfg, nil
-}
-
-func fetchConfig() string {
-	var res string
-
-	flag.StringVar(&res, "config", "", "path to config")
-	flag.Parse()
-
-	return res
 }
