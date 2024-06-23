@@ -10,7 +10,13 @@ import (
 
 type Config struct {
 	GRPCConfig GRPCConfig `yaml:"grpc" env-required:"true"`
+	HTTPConfig HTTPConfig `yaml:"http" env-required:"true"`
 	LogConfig  LogConfig  `yaml:"log" env-required:"true"`
+}
+
+type HTTPConfig struct {
+	Port               string `yaml:"port" env-required:"true"`
+	GRPCServerEndpoint string `yaml:"grpc_server_endpoint" env-required:"true"`
 }
 
 type GRPCConfig struct {

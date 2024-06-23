@@ -5,8 +5,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"hostManager/internal/app/grpc"
 	"hostManager/internal/config"
+	"hostManager/internal/transport/grpc"
+	"hostManager/internal/transport/rest"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,18 +24,30 @@ func StartApp() {
 		log.Fatal().Err(err).Msg("Failed to setup logger")
 	}
 
-	app := grpc.NewApp(cfg.GRPCConfig.Port, log.Logger)
-	if err = app.Start(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to start app")
+	grpcServer := grpc.NewServer(cfg.GRPCConfig.Port)
+	if err = grpcServer.Start(); err != nil {
+		log.Fatal().Err(err).Msg("Failed to start gRPC server")
 	}
-	log.Info().Msg("App started...")
+	httpServer := rest.NewServer(cfg.HTTPConfig)
+	if err = httpServer.Start(); err != nil {
+		log.Fatal().Err(err).Msg("Failed to start HTTP server")
+	}
+	log.Info().Msg("App started")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
 
-	app.Stop()
+	if err = httpServer.Stop(); err != nil {
+		log.Fatal().Err(err).Msg("Failed to stop HTTP server")
+	}
+
+	log.Info().Msg("http server stopped")
+
+	grpcServer.Stop()
+	log.Info().Msg("grpc server stopped")
+
 	log.Info().Msg("App stopped")
 }
 

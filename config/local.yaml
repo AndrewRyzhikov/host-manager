@@ -1,0 +1,16 @@
+grpc:
+  port: 50051
+
+http:
+  port: "8080"
+  grpc_server_endpoint: "localhost:50051"
+
+log:
+  level: "INFO"
+  path: "./logfile.json"
+  lumberjack:
+    max_size: 100
+    max_age: 30
+    max_backups: 7
+    local_time: true
+    compress: true

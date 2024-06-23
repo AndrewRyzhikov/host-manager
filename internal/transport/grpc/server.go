@@ -1,70 +1,46 @@
 package grpc
 
 import (
-	"context"
+	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"hostManager/internal/service"
-	api "hostManager/pkg/gen"
+	"net"
 )
 
 type Server struct {
-	api.UnimplementedDNSHostnameServiceServer
-	manager service.DNSManager
+	post       int
+	grpcServer *grpc.Server
+	log        zerolog.Logger
 }
 
-func NewServer(manager service.DNSManager) *Server {
-	return &Server{manager: manager}
+func NewServer(post int, log zerolog.Logger) *Server {
+	grpcServer := grpc.NewServer()
+	Register(grpcServer)
+
+	return &Server{post: post, log: log, grpcServer: grpcServer}
 }
 
-func Register(gRPC *grpc.Server) {
-	manager := service.NewFileSystemDNSManager(log.Logger)
-	server := NewServer(manager)
+func (s *Server) Start() error {
+	const op = "grpc.Start"
+	s.log = log.With().Str("op", op).Logger()
 
-	api.RegisterDNSHostnameServiceServer(gRPC, server)
-}
-
-func (s *Server) SetHostname(ctx context.Context, r *api.SetHostnameRequest) (*api.Response, error) {
-	if r.GetHostname() == "" {
-		return nil, status.Error(codes.InvalidArgument, "hostname or hostname is empty")
-	}
-
-	if err := s.manager.SetHostname(ctx, r.GetHostname()); err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &api.Response{}, nil
-}
-func (s *Server) ListDNSServers(ctx context.Context, r *api.Request) (*api.ListDNSServersResponse, error) {
-	servers, err := s.manager.ListDNSServers(ctx)
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.post))
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &api.ListDNSServersResponse{DnsServers: servers}, nil
+	log.Info().Str("grpc server started on %s", l.Addr().String())
+
+	go func() {
+		if err := s.grpcServer.Serve(l); err != nil {
+			log.Fatal().Msg("grpc server failed to serve")
+		}
+	}()
+
+	return nil
 }
 
-func (s *Server) AddDNSServer(ctx context.Context, r *api.AddDNSServerRequest) (*api.Response, error) {
-	if r.GetDnsServer() == "" {
-		return nil, status.Error(codes.InvalidArgument, "dns server is empty")
-	}
-
-	if err := s.manager.AddDNSServer(ctx, r.GetDnsServer()); err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &api.Response{}, nil
-}
-func (s *Server) RemoveDNSServer(ctx context.Context, r *api.RemoveDNSServerRequest) (*api.Response, error) {
-	if r.GetDnsServer() == "" {
-		return nil, status.Error(codes.InvalidArgument, "dns server is empty")
-	}
-
-	if err := s.manager.RemoveDNSServer(ctx, r.GetDnsServer()); err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &api.Response{}, nil
+func (s *Server) Stop() {
+	s.grpcServer.GracefulStop()
 }
